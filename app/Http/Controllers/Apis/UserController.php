@@ -35,6 +35,30 @@ class UserController extends Controller
      * @param Request $request Request
      *
      * @return JsonResponse
+     * 
+     * @OA\Post(
+     *     path="/api/auth/register",
+     *     tags={"Auth"},
+     *     summary="User Register",
+     *     @OA\RequestBody(
+     *         @OA\JsonContent(),
+     *         @OA\MediaType(
+     *            mediaType="multipart/form-data",
+     *            @OA\Schema(
+     *               type="object",
+     *               required={"name", "email", "password", "password_confirm"},
+     *               @OA\Property(property="name", type="text"),
+     *               @OA\Property(property="email", type="email"),
+     *               @OA\Property(property="password", type="password"),
+     *               @OA\Property(property="password_confirm", type="password"),
+     *            ),
+     *        ),
+     *    ),
+     *     @OA\Response(response="200", description="User register successfully"),
+     *     @OA\Response(response="422", description="Validation errors"),
+     *     @OA\Response(response="500", description="User register fail")
+     * )
+     * 
      */
     public function register(Request $request)
     {
@@ -64,6 +88,21 @@ class UserController extends Controller
      * @param int $id Id user was delete
      *
      * @return JsonResponse
+     * 
+     * @OA\Get(
+     *   path="/api/users/delete/{id}",
+     *   tags={"User"},
+     *   summary="Delete user",
+     *   @OA\Parameter(
+     *         description="User ID",
+     *         in="path",
+     *         name="id",
+     *         required=true,
+     *         @OA\Schema(type="string"),
+     *    ),
+     *   @OA\Response(response=200, description="Delete user successfully"),
+     *   @OA\Response(response=500, description="Delete user fail")
+     * )
      */
     public function delete(int $id)
     {
@@ -84,6 +123,22 @@ class UserController extends Controller
      * @param int $id Id user was delete
      *
      * @return JsonResponse
+     *
+     * @OA\Get(
+     *   path="/api/users/show/{id}",
+     *   tags={"User"},
+     *   summary="Show user",
+     *   @OA\Parameter(
+     *         description="User ID",
+     *         in="path",
+     *         name="id",
+     *         required=true,
+     *         @OA\Schema(type="string"),
+     *    ),
+     *   @OA\Response(response=200, description="Get user info successfully"),
+     *   @OA\Response(response=500, description="Get user info fail"),
+     *   @OA\Response(response=404, description="User not found")
+     * )
      */
     public function show(int $id)
     {

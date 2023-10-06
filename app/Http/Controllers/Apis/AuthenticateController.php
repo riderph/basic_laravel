@@ -21,7 +21,8 @@ class AuthenticateController extends Controller
      *
      * @return void
      */
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         $this->middleware('auth:api', ['except' => ['login']]);
     }
@@ -32,6 +33,27 @@ class AuthenticateController extends Controller
      * @param Request $request Request
      *
      * @return JsonResponse
+     *
+     * @OA\Post(
+     *     path="/api/auth",
+     *     tags={"Auth"},
+     *     summary="User login",
+     *     @OA\RequestBody(
+     *         @OA\JsonContent(),
+     *         @OA\MediaType(
+     *            mediaType="multipart/form-data",
+     *            @OA\Schema(
+     *               type="object",
+     *               required={"email", "password"},
+     *               @OA\Property(property="email", type="text"),
+     *               @OA\Property(property="password", type="password"),
+     *            ),
+     *        ),
+     *    ),
+     *     @OA\Response(response="200", description="User login successfully"),
+     *     @OA\Response(response="422", description="Validation errors"),
+     *     @OA\Response(response="500", description="User login fail")
+     * )
      */
     public function login(Request $request)
     {
@@ -60,6 +82,14 @@ class AuthenticateController extends Controller
      * Logout
      *
      * @return JsonResponse
+     * 
+     * * @OA\Post(
+     *     path="/api/auth/logout",
+     *     tags={"Auth"},
+     *     summary="User logout",
+     *     @OA\Response(response="200", description="User logout successfully"),
+     *     @OA\Response(response="500", description="User logout fail")
+     * )
      */
     public function logout()
     {

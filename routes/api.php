@@ -1,8 +1,8 @@
 <?php
 
 use App\Http\Controllers\Apis\AuthenticateController;
+use App\Http\Controllers\Apis\PostController;
 use App\Http\Controllers\Apis\UserController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -26,6 +26,7 @@ Route::group([
 
 ], function ($router) {
     Route::post('/', [AuthenticateController::class, 'login']);
+    Route::post('/register', [UserController::class, 'register']);
     Route::post('/logout', [AuthenticateController::class, 'logout']);
 });
 
@@ -33,8 +34,10 @@ Route::group([
     'middleware' => 'api',
     'prefix' => 'users'
 ], function ($router) {
-    Route::post('/register', [UserController::class, 'register']);
     Route::get('/show/{id}', [UserController::class, 'show']);
     Route::put('/update/{id}', [UserController::class, 'update']);
-    Route::post('/delete/{id}', [UserController::class, 'delete']);
+    Route::delete('/delete/{id}', [UserController::class, 'delete']);
+
+    Route::get('/test-policy', [PostController::class, 'index']);
+
 });
