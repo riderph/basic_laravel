@@ -13,7 +13,7 @@ if (!function_exists('trim_without_array')) {
      * @param array $values  Array will be trim
      * @param array $excepts Array except
      *
-     * @return string
+     * @return array|object
      */
     function trim_without_array($values, $excepts = [])
     {

@@ -7,6 +7,7 @@ namespace App\Providers;
 use App\Models\Post;
 use App\Policies\PostPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Laravel\Passport\Passport;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -24,6 +25,15 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Your client's secrets to be hashed when stored in your database 
+        // Uncomment if you want to hash your client secret before save to database
+        // Passport::hashClientSecrets();
+
+        // Config token timelifes 
+        Passport::tokensExpireIn(now()->addDays(15)); // change use constant
+        Passport::refreshTokensExpireIn(now()->addDays(30));
+        Passport::personalAccessTokensExpireIn(now()->addMonths(6));
+
         //
     }
 }

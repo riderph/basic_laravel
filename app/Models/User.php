@@ -2,15 +2,14 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Notifications\DeleteUserNotification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
-use Tymon\JWTAuth\Contracts\JWTSubject;
+use Laravel\Passport\HasApiTokens;
+use Illuminate\Support\Facades\Hash;
 
-class User extends Authenticatable implements JWTSubject
+class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
@@ -23,6 +22,8 @@ class User extends Authenticatable implements JWTSubject
         'name',
         'email',
         'password',
+        'provider',
+        'provider_id',
     ];
 
     /**
@@ -48,24 +49,6 @@ class User extends Authenticatable implements JWTSubject
     ];
 
     /**
-     * Get the identifier that will be stored in the subject claim of the JWT.
-     *
-     * @return mixed
-     */
-    public function getJWTIdentifier() {
-        return $this->getKey();
-    }
-
-    /**
-     * Return a key value array, containing any custom claims to be added to the JWT.
-     *
-     * @return array
-     */
-    public function getJWTCustomClaims() {
-        return [];
-    }
-
-    /**
      * Route notifications for the Slack channel.
      *
      * @param  DeleteUserNotification  $notification
@@ -74,5 +57,21 @@ class User extends Authenticatable implements JWTSubject
     public function routeNotificationForSlack(DeleteUserNotification $notification)
     {
         return config('notification.slack.alert_webhook_url');
+    }
+
+    /**
+     * Custom method to find the user for the Passport password grant.
+     */
+    public function findForPassport($email) {
+        return self::where('email', $email)->first(); // change column name whatever you use in credentials
+    }
+
+    /**
+     * Validate the password of the user for the Passport password grant.
+     */
+    public function validateForPassportPasswordGrant(string $password): bool
+    {
+        // Use can implement salt for password to increase security
+        return Hash::check($password, $this->password);
     }
 }

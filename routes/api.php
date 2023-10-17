@@ -28,10 +28,11 @@ Route::group([
     Route::post('/', [AuthenticateController::class, 'login']);
     Route::post('/register', [UserController::class, 'register']);
     Route::post('/logout', [AuthenticateController::class, 'logout']);
+    Route::post('google', [AuthenticateController::class, 'loginGoogle']);
 });
 
 Route::group([
-    'middleware' => 'api',
+    'middleware' => 'auth:api',
     'prefix' => 'users'
 ], function ($router) {
     Route::get('/show/{id}', [UserController::class, 'show']);

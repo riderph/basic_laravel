@@ -5,13 +5,16 @@ namespace App\Http\Controllers\Apis;
 use App\Exceptions\ForbiddenException;
 use App\Exceptions\ValidatorException;
 use App\Http\Controllers\Controller;
-use App\Services\Authenticate\Actions\LoginAction;
+use App\Http\Requests\UserLoginGoogleRequest;
+use App\Services\AuthenticatePassport\Actions\LoginAction;
 use App\Services\Authenticate\Actions\LogoutAction;
+use App\Services\AuthenticatePassport\Actions\LoginGoogleAction;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Exception;
+use Illuminate\Support\Facades\Http;
 
 class AuthenticateController extends Controller
 {
@@ -24,7 +27,7 @@ class AuthenticateController extends Controller
     public function __construct()
     {
         parent::__construct();
-        $this->middleware('auth:api', ['except' => ['login']]);
+        $this->middleware('auth:api', ['except' => ['login','loginGoogle']]);
     }
 
     /**
@@ -102,5 +105,20 @@ class AuthenticateController extends Controller
         }
 
         return $this->responseSuccess(trans('auth.logout.success'), $response);
+    }
+
+    public function loginGoogle(UserLoginGoogleRequest $request)
+    {
+        try {
+            $input = $request->validated();
+            $response = resolve(LoginGoogleAction::class)->run($input['token'] ?? '');
+
+            return $this->responseSuccess(trans('auth.login.success'), $response);
+
+        } catch (ForbiddenException $ex) {
+            return $this->responseError($ex->getMessage(), $ex->getData() ?? [], Response::HTTP_FORBIDDEN);
+        } catch (Exception $ex) {
+            return $this->responseError(trans('auth.failed'));
+        }
     }
 }
